@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { StudentFormModel } from '../models/api-models/student-form.model';
 import { Student } from '../models/api-models/student.model';
 
 @Injectable({
@@ -17,5 +18,9 @@ export class StudentService {
   }
   getStudent(id:string):Observable<Student>{
     return this.httpClient.get<Student>(this.url + "students" + "/" + id);
+  }
+
+  updateStudent(studentId:string,student:StudentFormModel):Observable<Student>{
+    return this.httpClient.put<Student>(this.url + "students/" + studentId,student);
   }
 }
