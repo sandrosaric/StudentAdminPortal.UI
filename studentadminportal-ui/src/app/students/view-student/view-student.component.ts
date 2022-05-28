@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { StudentFormModel } from 'src/app/models/api-models/student-form.model';
 import { Gender } from 'src/app/models/ui-models/gender.model';
 import { Student } from 'src/app/models/ui-models/student.model';
@@ -37,6 +38,11 @@ export class ViewStudentComponent implements OnInit {
 
   genderList:Gender[] = [];
 
+  isNewStudent = false;
+  header = "";
+
+
+
   constructor(private readonly service:StudentService,
     private readonly route:ActivatedRoute,private readonly genderService:GenderService,
     private snackBar:MatSnackBar,
@@ -47,20 +53,29 @@ export class ViewStudentComponent implements OnInit {
      this.studentId = params.get('id');
     });
     if(this.studentId){
-      this.service.getStudent(this.studentId).subscribe((result)=>{
-        this.student = result;
+      if(this.studentId.toLowerCase() == "Add".toLowerCase()){
+        this.isNewStudent = true;
+        this.header = "Add new student";
+      }
+      else{
+        this.header = "Edit student";
+        this.isNewStudent = false;
+        this.service.getStudent(this.studentId).subscribe((result)=>{
+          this.student = result;
+        },
+        (error:Response)=>{
+
+        });
+      }
+
+      this.genderService.getGenders().subscribe((result)=>{
+        this.genderList = result;
       },
       (error:Response)=>{
 
-      });
-    }
+      })
+      }
 
-    this.genderService.getGenders().subscribe((result)=>{
-      this.genderList = result;
-    },
-    (error:Response)=>{
-
-    })
 
 
   }
@@ -97,6 +112,23 @@ export class ViewStudentComponent implements OnInit {
 
       },
       (error:Response) => {
+
+      }
+    );
+  }
+
+
+  onAdd(){
+    console.log(this.student);
+    this.service.addStudent(this.student).subscribe(
+      result =>{
+        this.snackBar.open("Student successfully added!",undefined,{duration:2000});
+        setTimeout(()=>{
+          this.router.navigateByUrl("students");
+        },2000);
+        console.log(result);
+      },
+      error => {
 
       }
     );

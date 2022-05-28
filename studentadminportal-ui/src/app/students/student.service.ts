@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { StudentFormModel } from '../models/api-models/student-form.model';
+import { StudentPostFormModel } from '../models/api-models/student-post-form-model';
 import { Student } from '../models/api-models/student.model';
 
 @Injectable({
@@ -25,5 +26,20 @@ export class StudentService {
   }
   deleteStudent(studentId:string):Observable<Student>{
     return this.httpClient.delete<Student>(this.url + "students/" + studentId);
+  }
+  addStudent(student:Student):Observable<Student>{
+
+    let studentPostFormModel:StudentPostFormModel ={
+      firstName: student.firstName,
+      lastName: student.lastName,
+      dateOfBirth: student.dateOfBirth,
+      mobile: student.mobile,
+      email: student.email,
+      genderId: student.genderId,
+      physicalAddress: student.address.physicalAddress,
+      postalAddress: student.address.postalAddress,
+    }
+
+    return this.httpClient.post<Student>(this.url + "Students",studentPostFormModel);
   }
 }
