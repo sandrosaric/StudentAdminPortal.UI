@@ -23,4 +23,7 @@ export class StudentService {
   updateStudent(studentId:string,student:StudentFormModel):Observable<Student>{
     return this.httpClient.put<Student>(this.url + "students/" + studentId,student);
   }
+  deleteStudent(studentId:string):Observable<Student>{
+    return this.httpClient.delete<Student>(this.url + "students/" + studentId);
+  }
 }
