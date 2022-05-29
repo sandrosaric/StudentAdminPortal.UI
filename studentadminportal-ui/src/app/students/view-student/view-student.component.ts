@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -40,6 +41,8 @@ export class ViewStudentComponent implements OnInit {
 
   isNewStudent = false;
   header = "";
+
+  @ViewChild("studentDetailsForm") studentDetailsForm? :NgForm
 
 
   displayProfileImageUrl:string = "";
@@ -87,25 +90,28 @@ export class ViewStudentComponent implements OnInit {
 
 
   onUpdate():void{
-    let studentFormModel:StudentFormModel ={
-      firstName: this.student.firstName,
-      lastName: this.student.lastName,
-      dateOfBirth: this.student.dateOfBirth,
-      mobile: this.student.mobile,
-      email: this.student.email,
-      genderId: this.student.genderId,
-      physicalAddress: this.student.address.physicalAddress,
-      postalAddress: this.student.address.postalAddress,
-    }
-    this.service.updateStudent(this.student.id,studentFormModel).subscribe(
-      result =>{
-        console.log(result);
-        this.snackBar.open("Student updated successfully!",undefined,{duration:2000});
-      },
-      error => {
-
+    if(this.studentDetailsForm?.form.valid){
+      let studentFormModel:StudentFormModel ={
+        firstName: this.student.firstName,
+        lastName: this.student.lastName,
+        dateOfBirth: this.student.dateOfBirth,
+        mobile: this.student.mobile,
+        email: this.student.email,
+        genderId: this.student.genderId,
+        physicalAddress: this.student.address.physicalAddress,
+        postalAddress: this.student.address.postalAddress,
       }
-    );
+      this.service.updateStudent(this.student.id,studentFormModel).subscribe(
+        result =>{
+          console.log(result);
+          this.snackBar.open("Student updated successfully!",undefined,{duration:2000});
+        },
+        error => {
+
+        }
+      );
+    }
+
   }
 
   onDelete():void{
@@ -125,7 +131,8 @@ export class ViewStudentComponent implements OnInit {
 
 
   onAdd(){
-    console.log(this.student);
+    if(this.studentDetailsForm?.form.valid){
+      console.log(this.student);
     this.service.addStudent(this.student).subscribe(
       result =>{
         this.snackBar.open("Student successfully added!",undefined,{duration:2000});
@@ -135,13 +142,15 @@ export class ViewStudentComponent implements OnInit {
         console.log(result);
       },
       error => {
-
+        console.log(error);
       }
     );
+    }
+
   }
 
   private setImage():void {
-    if(this.student.profileImageUrl && this.student.profileImageUrl != null && this.student.profileImageUrl != ""){
+    if(this.student.profileImageUrl){
       //fetch the image by url
       this.displayProfileImageUrl = this.service.getImagePath(this.student.profileImageUrl);
       console.log(this.displayProfileImageUrl);
