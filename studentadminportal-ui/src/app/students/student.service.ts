@@ -42,4 +42,18 @@ export class StudentService {
 
     return this.httpClient.post<Student>(this.url + "Students",studentPostFormModel);
   }
+
+  uploadImage(studentId:string,file:File ):Observable<any>{
+    const formData = new FormData();
+    formData.append("profileImage",file);
+
+    return this.httpClient.post(this.url + "students/" + studentId + "/upload-image",formData,{
+      responseType:"text"
+    });
+  }
+
+
+  getImagePath(relativePath:string){
+    return `${this.url}${relativePath}`;
+  }
 }

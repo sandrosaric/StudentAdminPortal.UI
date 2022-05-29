@@ -42,6 +42,7 @@ export class ViewStudentComponent implements OnInit {
   header = "";
 
 
+  displayProfileImageUrl:string = "";
 
   constructor(private readonly service:StudentService,
     private readonly route:ActivatedRoute,private readonly genderService:GenderService,
@@ -56,12 +57,16 @@ export class ViewStudentComponent implements OnInit {
       if(this.studentId.toLowerCase() == "Add".toLowerCase()){
         this.isNewStudent = true;
         this.header = "Add new student";
+        this.setImage();
       }
       else{
         this.header = "Edit student";
         this.isNewStudent = false;
+
         this.service.getStudent(this.studentId).subscribe((result)=>{
           this.student = result;
+          this.setImage();
+
         },
         (error:Response)=>{
 
@@ -79,6 +84,7 @@ export class ViewStudentComponent implements OnInit {
 
 
   }
+
 
   onUpdate():void{
     let studentFormModel:StudentFormModel ={
@@ -133,4 +139,43 @@ export class ViewStudentComponent implements OnInit {
       }
     );
   }
+
+  private setImage():void {
+    if(this.student.profileImageUrl && this.student.profileImageUrl != null && this.student.profileImageUrl != ""){
+      //fetch the image by url
+      this.displayProfileImageUrl = this.service.getImagePath(this.student.profileImageUrl);
+      console.log(this.displayProfileImageUrl);
+    }
+    else{
+//display by default
+    this.displayProfileImageUrl = "/assets/user-icon-png-transparent-17.jpg";
+    }
+
+  }
+
+  uploadImage(event:any){
+    if(this.studentId){
+     const file:File = event.target.files[0];
+     this.service.uploadImage(this.student.id,file).subscribe(
+       result =>{
+         this.student.profileImageUrl = result;
+         this.setImage();
+
+         this.snackBar.open("Image uploaded successfully!",undefined,{
+           duration:2000
+         })
+       },
+       (error) =>[
+
+       ]
+     );
+
+    }
+  }
+
+
+
 }
+
+
+

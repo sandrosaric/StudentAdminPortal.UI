@@ -7,3 +7,18 @@
 .mat-form-field{
   width:100%;
 }
+.image-container{
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border:2px solid #CCC;
+  background-color: #f7f7ff;
+}
+
+.image-container img{
+  width:200px;
+}
